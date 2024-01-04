@@ -1,84 +1,89 @@
-/*
-Rules of rock paper sciorrs
-
-we will have two player - 
-    1.Computer
-    2.User
-
-    for computer:
-    arr= ["rock","paper","scissors"]
-    index = Math.floor(Math.random() * 3);
-    arr[index]
-
-    for user:
-    there will be input field to select whatever they want
-
-    case 1: rock == rock -> tie
-    case 2: rock == paper -> w-rock
-    case 3: rock == scissors -> w- rock
-    case 4: paper == paper -> tie
-    case 5: paper == scissors -> w-> scissors
-    case 6: scissors == scissors -> tie
-
-*/
-
 let playerScore = 0;
 let computerScore = 0;
+let roundsPlayed = 0;
 
-function getComputerChoice (){
-    const arr = ["Rock", "Paper", "Scissors"]
+function getComputerChoice() {
+    const arr = ["rock", "paper", "scissors"];
     let randomIndex = Math.floor(Math.random() * 3);
-    const selctedIndex = arr[randomIndex];
-    return selctedIndex;
+    const selectedIndex = arr[randomIndex];
+    return selectedIndex;
 }
-
-
 
 function playRound(playerSelection, computerSelection) {
-    //playerSelection should be case insensitive
     const playerChoice = playerSelection.toLowerCase();
     const computerChoice = computerSelection.toLowerCase();
-    if(playerChoice === computerChoice){
-        return "It's a Tie";
-    }
-    else if(playerChoice === "rock" && computerChoice === "paper" 
-        || playerChoice === "rock" && computerChoice === "scissors" 
-        || playerChoice === "scissors" && computerChoice === "paper" )
-        {
-        playerScore++;
-        return "You win " + `${playerSelection.toUpperCase()} beats ${computerSelection.toUpperCase()}`;
-        
-        }
-    else{
+
+    if (playerChoice === computerChoice) {
         computerScore++;
-        return "You lose! " + `${computerSelection.toUpperCase()} beats ${playerSelection.toUpperCase()}`;
-        
-    }
-  }
-
-
-
-function game(){
-     for(let i=0; i<5; i++){
-        const playerSelection = prompt("Select your choice:Rock,Paper or Scissors" , '').toLowerCase();
-        const computerSelection = getComputerChoice();
-        const result = playRound(playerSelection, computerSelection);
-        console.log(result);
-    }
-
-    console.log("Game Over");
-    console.log("playerScore",playerScore);
-    console.log("computerScore",computerScore);
-
-    if(playerScore>computerScore){
-        return "You are the winner";
-    }
-    else if(playerScore === computerScore){
-        return "It's a tie";
-    }
-    else{
-        return "You lost the game";
+        playerScore++;
+        return "It's a Tie";
+    } else if (
+        (playerChoice === "rock" && computerChoice === "scissors") ||
+        (playerChoice === "rock" && computerChoice === "paper") ||
+        (playerChoice === "scissors" && computerChoice === "paper")
+    ) {
+        playerScore++;
+        return `You win! ${playerSelection.toUpperCase()} beats ${computerSelection.toUpperCase()}`;
+    } else {
+        computerScore++;
+        return `You lose! ${computerSelection.toUpperCase()} beats ${playerSelection.toUpperCase()}`;
     }
 }
 
-console.log(game());
+function updateResults(result) {
+    document.getElementById("result").innerHTML = result;
+    document.getElementById("score").innerHTML = `Player: ${playerScore} | Computer: ${computerScore}`;
+
+    roundsPlayed++;
+    if (roundsPlayed === 5) {
+        endGame();
+    }
+}
+
+function endGame() {
+    if (playerScore > computerScore) {
+        document.getElementById("finalScore").innerHTML = "You are the winner! Congrats";
+    } else {
+        document.getElementById("finalScore").innerHTML = "You lost! Better luck next time.";
+    }
+
+    // Show the "Start Again" button
+    document.getElementById("startAgain").style.display = "block";
+    
+}
+
+window.onload = function () {
+    document.getElementById("rock").addEventListener("click", function () {
+        const computerChoice = getComputerChoice();
+        const result = playRound("rock", computerChoice);
+        updateResults(result);
+    });
+
+    document.getElementById("paper").addEventListener("click", function () {
+        const computerChoice = getComputerChoice();
+        const result = playRound("paper", computerChoice);
+        updateResults(result);
+    });
+
+    document.getElementById("scissors").addEventListener("click", function () {
+        const computerChoice = getComputerChoice();
+        const result = playRound("scissors", computerChoice);
+        updateResults(result);
+    });
+
+    document.getElementById("startAgain").addEventListener("click", function () {
+        // Hide the "Start Again" button
+        document.getElementById("startAgain").style.display = "none";
+
+        // Reset scores and roundsPlayed for a new game
+        playerScore = 0;
+        computerScore = 0;
+        roundsPlayed = 0;
+
+        // Clear previous results
+        document.getElementById("result").innerHTML = "";
+        document.getElementById("score").innerHTML = "";
+        document.getElementById("finalScore").innerHTML = "";
+    });
+};
+
